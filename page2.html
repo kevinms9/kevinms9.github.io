@@ -1,11 +1,161 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
+body {
+  font: 12px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+}
+
+.dot {
+  stroke: #000;
+}
 </style>
 <body>
-<a href="index.html">1</a> 2 <a href="page3.html">3</a>
+<div class="page_text">
+Page:
+<br/>
+<a href="index.html">1</a> 2 <a href="page3.html">3</a> <a href="page4.html">4</a> <a href="page5.html">5</a> <a href="page6.html">6</a>
+<br/> <br/>
+Hover over a graph point to view more details.
+<br/> <br/>
+</div>
+<div class="graph">
+</div>
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	.style("position", "absolute");
+	
+var tooltip = d3.select("body").append("div")
+	.style("position", "absolute")
+	.style("z-index", 1)
+	.style("background-color", "white")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+	
+var annotation = d3.select("body").append("div")
+	.style("position", "absolute")
+	.style("background-color", "white")
+    .attr("class", "tooltip")
+    .style("opacity", 1)
+	.style("left", 650 + "px")
+    .style("top", 250 + "px")
+	.html("This trend continues into the 80s, <br/> however there are many more Japanese <br/> made high horsepower low MPG cars as well.");
+
+d3.csv("cars80.csv", function(error, data) {
+  if (error) throw error;
+
+  data.forEach(function(d) {
+    d.Horsepower = +d.Horsepower;
+    d.Miles_per_Gallon = +d.Miles_per_Gallon;
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.Horsepower; })).nice();
+  y.domain(d3.extent(data, function(d) { return d.Miles_per_Gallon; })).nice();
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Horsepower");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Miles per Gallon")
+
+  svg.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 4.5)
+      .attr("cx", function(d) { return x(d.Horsepower); })
+      .attr("cy", function(d) { return y(d.Miles_per_Gallon); })
+      .style("fill", function(d) { return color(d.Origin); })
+      .on("mouseover", function(d) {
+          tooltip.transition()
+               .duration(200)
+               .style("opacity", 1);
+          tooltip.html(d["Name"] + "<br/> Horsepower: " + d.Horsepower 
+	        + "<br/> MPG: " + d.Miles_per_Gallon + "<br/> Year: " + d.Year + "")
+               .style("left", (d3.event.pageX + 15) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(0)
+               .style("opacity", 0)
+               .style("left", 1000 + "px")
+               .style("top", 1000 + "px");
+      });
+
+  var legend = svg.selectAll(".legend")
+      .data(color.domain())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", color);
+
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d; });
+	  
+	svg.append("text")
+		.attr("x", (width / 2))             
+		.attr("y", 20 - (margin.top / 2))
+		.attr("text-anchor", "middle")  
+		.style("font-size", "16px") 
+		.style("text-decoration", "underline")  
+		.text("Horsepower vs MPG in the 1980s");
+});
 </script>
 </body>
 </html>

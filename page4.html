@@ -19,7 +19,7 @@ body {
 <div class="page_text">
 Page:
 <br/>
-<a href="index.html">1</a> <a href="page2.html">2</a> 3 <a href="page4.html">4</a> <a href="page5.html">5</a> <a href="page6.html">6</a>
+<a href="index.html">1</a> <a href="page2.html">2</a> <a href="page3.html">3</a> 4 <a href="page5.html">5</a> <a href="page6.html">6</a>
 <br/> <br/>
 Hover over a graph point to view more details.
 <br/> <br/>
@@ -67,11 +67,11 @@ var annotation = d3.select("body").append("div")
 	.style("background-color", "white")
     .attr("class", "tooltip")
     .style("opacity", 1)
-	.style("left", 650 + "px")
-    .style("top", 250 + "px")
-	.html("Manufacturers in the USA made a lot <br/> more 6 and 8 cylinder vehicles in the 70s than <br/> their competition in other countries.");
+	.style("left", 280 + "px")
+    .style("top", 350 + "px")
+	.html("This trend starts to taper off in the 1980s. <br/> The USA still made plenty of 6 and 8 cylinder <br/> vehicles, but more economical 4 cylinder vehicles <br/> came onto the market as well.");
 
-d3.csv("cars70.csv", function(error, data) {
+d3.csv("cars80.csv", function(error, data) {
   if (error) throw error;
 
   data.forEach(function(d) {
@@ -154,7 +154,7 @@ d3.csv("cars70.csv", function(error, data) {
 		.attr("text-anchor", "middle")  
 		.style("font-size", "16px") 
 		.style("text-decoration", "underline")  
-		.text("Cylinders vs MPG in the 1970s");
+		.text("Cylinders vs MPG in the 1980s");
 });
 </script>
 </body>

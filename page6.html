@@ -19,7 +19,7 @@ body {
 <div class="page_text">
 Page:
 <br/>
-<a href="index.html">1</a> <a href="page2.html">2</a> 3 <a href="page4.html">4</a> <a href="page5.html">5</a> <a href="page6.html">6</a>
+<a href="index.html">1</a> <a href="page2.html">2</a> <a href="page3.html">3</a> <a href="page4.html">4</a> <a href="page5.html">5</a> 6
 <br/> <br/>
 Hover over a graph point to view more details.
 <br/> <br/>
@@ -67,19 +67,19 @@ var annotation = d3.select("body").append("div")
 	.style("background-color", "white")
     .attr("class", "tooltip")
     .style("opacity", 1)
-	.style("left", 650 + "px")
-    .style("top", 250 + "px")
-	.html("Manufacturers in the USA made a lot <br/> more 6 and 8 cylinder vehicles in the 70s than <br/> their competition in other countries.");
+	.style("left", 710 + "px")
+    .style("top", 270 + "px")
+	.html("And once again this trend starts to taper off <br/> in the 1980s with the USA generally making <br/> lighter, more fuel efficient vehicles.");
 
-d3.csv("cars70.csv", function(error, data) {
+d3.csv("cars80.csv", function(error, data) {
   if (error) throw error;
 
   data.forEach(function(d) {
-    d.Cylinders = +d.Cylinders;
+    d.Weight_in_lbs = +d.Weight_in_lbs;
     d.Miles_per_Gallon = +d.Miles_per_Gallon;
   });
 
-  x.domain(d3.extent(data, function(d) { return d.Cylinders; })).nice();
+  x.domain(d3.extent(data, function(d) { return d.Weight_in_lbs; })).nice();
   y.domain(d3.extent(data, function(d) { return d.Miles_per_Gallon; })).nice();
 
   svg.append("g")
@@ -91,7 +91,7 @@ d3.csv("cars70.csv", function(error, data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Cylinders");
+      .text("Weight In Pounds");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -109,14 +109,14 @@ d3.csv("cars70.csv", function(error, data) {
     .enter().append("circle")
       .attr("class", "dot")
       .attr("r", 4.5)
-      .attr("cx", function(d) { return x(d.Cylinders); })
+      .attr("cx", function(d) { return x(d.Weight_in_lbs); })
       .attr("cy", function(d) { return y(d.Miles_per_Gallon); })
       .style("fill", function(d) { return color(d.Origin); })
       .on("mouseover", function(d) {
           tooltip.transition()
                .duration(200)
                .style("opacity", 1);
-          tooltip.html(d["Name"] + "<br/> Cylinders: " + d.Cylinders 
+          tooltip.html(d["Name"] + "<br/> Weight: " + d.Weight_in_lbs + " lbs"
 	        + "<br/> MPG: " + d.Miles_per_Gallon + "<br/> Year: " + d.Year + "")
                .style("left", (d3.event.pageX + 15) + "px")
                .style("top", (d3.event.pageY - 28) + "px");
@@ -154,7 +154,7 @@ d3.csv("cars70.csv", function(error, data) {
 		.attr("text-anchor", "middle")  
 		.style("font-size", "16px") 
 		.style("text-decoration", "underline")  
-		.text("Cylinders vs MPG in the 1970s");
+		.text("Weight vs MPG in the 1980s");
 });
 </script>
 </body>
